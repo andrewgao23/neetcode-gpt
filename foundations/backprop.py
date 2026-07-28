@@ -6,6 +6,10 @@ from typing import Tuple
 class Solution:
     def sigmoid(self, x): 
         return 1/(1+np.exp(-x))
+    def dLdw(self,y_hat,y_true,x):
+        return (y_hat - y_true)*y_hat*(1-y_hat) * x
+    def dLdb(self,y_hat,y_true):
+        return (y_hat - y_true)*y_hat*(1-y_hat)
     def backward(self, x: NDArray[np.float64], w: NDArray[np.float64], b: float, y_true: float) -> Tuple[NDArray[np.float64], float]:
         # x: 1D input array
         # w: 1D weight array
@@ -15,11 +19,11 @@ class Solution:
         # Forward: z = dot(x, w) + b, y_hat = sigmoid(z)
         # Loss: L = 0.5 * (y_hat - y_true)^2
         # Return: (dL_dw rounded to 5 decimals, dL_db rounded to 5 decimals)
-        z = w.T @ x +b 
-        y_pred = self.sigmoid(z)
+        z = w.T @ x + b 
+        y_hat = self.sigmoid(z)
 
-        dL_dw = (y_pred - y_true)*y_pred*(1-y_pred) *x
-        dL_db = (y_pred - y_true)*y_pred*(1-y_pred)
+        dL_dw = self.dLdw(y_hat,y_true,x)
+        dL_db = self.dLdb(y_hat,y_true)
 
         return np.round(dL_dw, 5), np.round(dL_db, 5)
         pass
